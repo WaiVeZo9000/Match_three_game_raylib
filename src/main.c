@@ -36,7 +36,28 @@ void init_board(){
 }
 
 void resolve_matches(){
-    
+    // Iterate the board columns by columns
+    for (int x = 0 ; x < BOARD_SIZE ; x++){
+        char tempColumn[BOARD_SIZE];
+        int tempIndex = BOARD_SIZE - 1; // To track the temp column and fill it from bottom to top
+
+        // Collect non-matched tiles from bottom to top
+        for (int y = BOARD_SIZE - 1 ; y > 0 ; y--){
+            if (!matched[y][x]){
+                tempColumn[tempIndex--] = Board[y][x];
+            }
+        }
+
+        // Fill the remaining top spots  in temp column with new random tiles
+        while (tempIndex >= 0){
+            tempColumn[tempIndex--] = random_tile();
+        }
+
+        // Copy the column back to the original 
+        for (int i = 0 ; i < BOARD_SIZE ; i++){
+            Board[i][x] = tempColumn[i] ;
+        }
+    }    
 }
 
 bool find_matches(){
@@ -134,6 +155,8 @@ int main(void)
         );
 
         find_matches();
+
+        resolve_matches();
         // Draw a 8x8 board
         for (int i = 0; i < BOARD_SIZE; i++){
             for (int j = 0; j < BOARD_SIZE; j++){
