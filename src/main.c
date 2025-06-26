@@ -11,9 +11,12 @@
 char tileTypes[TILE_TYPES] = {'@', '#', '&', '$', '%'};
 char Board[BOARD_SIZE][BOARD_SIZE];
 bool matched[BOARD_SIZE][BOARD_SIZE]; // store the matched value of the tiles
+float fallOffset[BOARD_SIZE][BOARD_SIZE];
 
 int score = 100;
 Vector2 origin;
+float fallSpeed = 8.0f;
+Vector2 selectedTile = {-10, -10}; // To keep track of the selected tile
 
 char random_tile(){
     return tileTypes[rand() % TILE_TYPES];
@@ -42,7 +45,7 @@ void resolve_matches(){
         int tempIndex = BOARD_SIZE - 1; // To track the temp column and fill it from bottom to top
 
         // Collect non-matched tiles from bottom to top
-        for (int y = BOARD_SIZE - 1 ; y > 0 ; y--){
+        for (int y = BOARD_SIZE - 1 ; y >= 0 ; y--){
             if (!matched[y][x]){
                 tempColumn[tempIndex--] = Board[y][x];
             }
@@ -106,7 +109,6 @@ int main(void)
 
     // Initialize the mouse position
     Vector2 mousePos = {0, 0};
-    Vector2 selectedTile = {-10, -10}; // To keep track of the selected tile
 
     InitWindow(screenWidth, screenHeight, "Match Three Game");
 
@@ -154,9 +156,10 @@ int main(void)
             WHITE
         );
 
-        find_matches();
+        if (find_matches()){
+            resolve_matches();
+        };
 
-        resolve_matches();
         // Draw a 8x8 board
         for (int i = 0; i < BOARD_SIZE; i++){
             for (int j = 0; j < BOARD_SIZE; j++){
